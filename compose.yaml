@@ -1,0 +1,13 @@
+services:
+
+  web_dependency_api:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - logs:/var/log
+
+volumes:
+    logs:
