@@ -1,3 +1,13 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# dependencies = [
+#   "sanic[ext]",
+#   "ujson",
+#   "aiohttp",
+#   "beautifulsoup4",
+# ]
+# ///
+
 from pathlib import Path
 import logging
 
@@ -18,3 +28,5 @@ async def root(request) -> sanic.HTTPResponse:
 async def favicon(request) -> sanic.HTTPResponse:
     return sanic.response.convenience.empty()  # suppress browser exception spam
 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000, access_log=True, single_process=True)
