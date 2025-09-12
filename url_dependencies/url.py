@@ -2,6 +2,18 @@ from collections.abc import Mapping
 from urllib.parse import urlencode, urlparse, urlunparse
 
 
+def relative_to_absolute_url(absolute_url: str, url: str) -> str:
+    # TODO: for relative/absolute only the scheme and host should be present in url,
+    # the path query and hash should be striped
+    return urlunparse(
+        url_param or absolute_param
+        for url_param, absolute_param in zip(
+            urlparse(url),
+            urlparse(absolute_url),
+        )
+    )
+
+
 def compose_url(
     urlstring: str = '',
     scheme: str = '',

@@ -33,7 +33,11 @@ async def favicon(request: sanic.Request) -> sanic.HTTPResponse:
 
 @app.route('/thing', methods=["GET", "POST"])
 async def thing(request: sanic.Request) -> sanic.HTTPResponse:
-    kwargs = ChainMap({k:request.args.get(k) for k in request.args.keys()} or {}, request.json or {})
+    kwargs = ChainMap(
+        {k:request.args.get(k) for k in request.args.keys()} or {},
+        request.json if 'json' in request.content_type else {},
+        request.form if 'form' in request.content_type else {},
+    )
     log.info(kwargs)
     return sanic.response.json((await deps.get_dependencies(**kwargs)) or {})
 
