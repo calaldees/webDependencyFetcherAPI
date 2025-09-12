@@ -1,8 +1,9 @@
-from collections.abc import Mapping, Sequence, Iterable, Set
+from collections.abc import Mapping, Sequence, Iterable
 import logging
 from functools import cached_property, partial
 from itertools import chain
 from typing import Tuple
+import asyncio
 
 import aiohttp
 from bs4 import BeautifulSoup
@@ -46,5 +47,9 @@ class UrlDependencies:
             return frozenset(map(partial(relative_to_absolute_url, url), dependency_urls))
         raise Exception(f"unsupported {response.content_type=} for {url=}")
 
-    async def get_dependencies(self, urls=(), **kwargs) -> Mapping[str, Sequence[str]]:
-        return {url: tuple(await self.get_dependencies_for_url(url)) for url in urls}
+    async def get_dependencies(self, urls=(), **kwargs) -> Sequence[str]:
+        dependencies = await asyncio.gather(*(  # fetch all urls in parallel
+            self.get_dependencies_for_url(url)
+            for url in urls
+        ))#, return_exceptions=True)  # TODO: prevent one exception tanking the whole request
+        return tuple(frozenset(chain.from_iterable(dependencies)))
