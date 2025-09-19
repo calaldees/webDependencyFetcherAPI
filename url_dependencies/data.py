@@ -1,5 +1,6 @@
 import itertools
 from collections.abc import Mapping, Sequence, Generator
+from typing import Callable
 
 
 def get_path(data: Sequence | Mapping, path: str | Sequence[str]):
@@ -50,8 +51,23 @@ def crawl_for_key(data: Mapping | Sequence, key: str) -> Generator:
     if isinstance(data, Mapping):
         if value := data.get(key):
             yield value
-        yield from itertools.chain.from_iterable(
-            crawl_for_key(v, key) for k, v in data.items()
-        )
+        yield from itertools.chain.from_iterable(crawl_for_key(v, key) for k, v in data.items())
     elif isinstance(data, Sequence) and not isinstance(data, str):
         yield from itertools.chain.from_iterable(crawl_for_key(i, key) for i in data)
+
+
+def crawl_for_str_value(data: Mapping | Sequence, value_func: Callable[[str], str]) -> Generator[str]:
+    """
+    >>> data = {'url': 'hello1', 'data': ['some stuff', 'hello2'], {'a': 'hello3', 'b': 'not really'}}
+    >>> def only_hell(s: str) -> str:
+    ...    return s if s.startswith('hell') else ''
+    >>> tuple(crawl_for_str_value(data, only_hell))
+    ('hello', 'hello2', 'hello3')
+    """
+    if isinstance(data, Mapping):
+        yield from itertools.chain.from_iterable(crawl_for_str_value(v, value_func) for k, v in data.items())
+    elif isinstance(data, Sequence) and not isinstance(data, str):
+        yield from itertools.chain.from_iterable(crawl_for_str_value(i, value_func) for i in data)
+    elif isinstance(data, str):
+        if vv := value_func(data):
+            yield vv

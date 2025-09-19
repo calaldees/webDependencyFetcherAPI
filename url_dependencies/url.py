@@ -2,7 +2,18 @@ from collections.abc import Mapping
 from urllib.parse import urlencode, urlparse, urlunparse
 
 
+def is_absolute_url(url: str) -> str:
+    url_parts = urlparse(url)
+    if url_parts.host and url_parts.path:
+        return url
+    return ''
+
+
 def relative_to_absolute_url(absolute_url: str, url: str) -> str:
+    """
+    >>> relative_to_absolute_url('https://articles.globalplayer.com/7giJHKNG3vRYWz22MQDbr2cB1', './assets/index.css')
+    'https://articles.globalplayer.com/assets/index.css'
+    """
     # TODO: for relative/absolute only the scheme and host should be present in url,
     # the path query and hash should be striped
     return urlunparse(
