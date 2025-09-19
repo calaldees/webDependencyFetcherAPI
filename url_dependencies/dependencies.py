@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 type Headers = Iterable[Tuple[str,str]]
 
+
 class UrlDependencies:
     def __init__(self):
         pass

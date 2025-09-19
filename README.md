@@ -1,21 +1,28 @@
-# webDependencyFetcherAPI
-Get list of dependencies for a url resource (e.g. if html -> list css, js, img)
+webDependencyFetcherAPI
+=======================
+
+* Get list of dependencies for a url resource
+* for each `url` source
+    * if `html` -> list css, js, img (relative paths are returned as absolute)
+    * if `json` -> crawl for any str that are absolute urls
+* each url fetch is cached for 5 min
 
 ```bash
 # brew install uv
 ./app.py
-curl --request GET --url 'http://localhost:8000' --data-urlencode 'urls=https://www.bbc.co.uk/'
+
+
+curl \
+--request GET \
+--url 'http://localhost:8000/dependenciesOf' \
+--data-urlencode 'urls=https://www.bbc.co.uk/'
+
 
 curl \
 --request GET \
 --url 'http://localhost:8000/dependenciesOf' \
 --header 'Accept: application/vnd.global.22+json' \
 --data-urlencode 'urls=https://bff-mobile-guacamole.musicradio.com/features/news/all-users'
-
-curl \
---request GET \
---url 'http://localhost:8000/dependenciesOf' \
---data-urlencode 'urls=https://www.bbc.co.uk/'
 
 
 curl \
